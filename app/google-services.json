@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "436839650227",
+    "project_id": "weatherful-24ee6",
+    "storage_bucket": "weatherful-24ee6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:436839650227:android:e80442e2d2201c017731c6",
+        "android_client_info": {
+          "package_name": "com.angelsingh.weatherful"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "436839650227-nv95gglg7f5tbesgs9m2f9bv54bi8njl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0lHx6NafYwVnR6I1_cbGITD7kr6p-lqc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "436839650227-nv95gglg7f5tbesgs9m2f9bv54bi8njl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

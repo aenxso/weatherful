@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
@@ -29,6 +30,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
         setContentView(R.layout.activity_main)
 //        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -50,16 +53,13 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                     if (!response.isSuccessful) {
                         Log.d("TAG", response.message())
                     }
-
                     val weatherData = response.body()!!
                     Log.d("TAG", weatherData.cityName)
                     degressNumLabel.text = String.format("%.1f", weatherData.main.temperature)
                     cityLabel.text = weatherData.cityName
 
                     searchField.setQuery("", false)
-
                 }
-
                 override fun onFailure(call: Call<WeatherData>, t: Throwable) {
                     Log.d("TAG", t.toString())
                 }

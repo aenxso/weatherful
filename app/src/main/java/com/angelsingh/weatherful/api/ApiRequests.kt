@@ -16,6 +16,13 @@ interface ApiRequests {
         @Query("units") units: String
     ): Call<WeatherData>
 
+    @GET("data/2.5/weather?")
+    fun getLocalForecast(
+            @Query("q") cityName: String,
+            @Query("appid") appId: String,
+            @Query("units") units: String
+    ): Call<WeatherData>
+
     companion object {
         fun create(): ApiRequests {
             val retrofit = Retrofit.Builder()

@@ -21,7 +21,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/light_background" />
+        app:srcCompat="@drawable/weatherful_bg" />
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchField"

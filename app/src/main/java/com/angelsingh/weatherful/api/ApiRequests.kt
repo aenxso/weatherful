@@ -18,7 +18,8 @@ interface ApiRequests {
 
     @GET("data/2.5/weather?")
     fun getLocalForecast(
-            @Query("q") cityName: String,
+            @Query("lat") latitude: Double?,
+            @Query("lon") longitude: Double?,
             @Query("appid") appId: String,
             @Query("units") units: String
     ): Call<WeatherData>

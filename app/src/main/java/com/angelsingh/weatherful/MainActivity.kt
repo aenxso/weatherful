@@ -20,7 +20,6 @@ import androidx.core.app.ActivityCompat
 import com.angelsingh.weatherful.api.ApiRequests
 import com.angelsingh.weatherful.model.WeatherData
 import com.google.android.gms.location.*
-import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
@@ -34,7 +33,6 @@ import retrofit2.Response
 
 class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
-    private var cts = CancellationTokenSource()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val apiReq by lazy {
         ApiRequests.create()
@@ -46,22 +44,21 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             if (locationResult == null) {
                 return
             }
-            for (location in locationResult.locations) {
-                Log.d("TAG-locations", location.toString())
-            }
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         setContentView(R.layout.activity_main)
+        supportActionBar?.hide()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationReq = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10 * 1000)        // 10 seconds, in milliseconds
-                .setFastestInterval(1 * 1000); // 1 second, in milliseconds
+                .setFastestInterval(1 * 1000) // 1 second, in milliseconds
+
+        getLocation()
 
         searchButton.setOnClickListener {
             if (searchField.query.toString().isNotEmpty()) {
@@ -69,10 +66,10 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 hideKeyboard()
             }
         }
-        getLocation()
 
         locationButton.setOnClickListener {
             getLocation()
+            hideKeyboard()
         }
 
         onTouchOutside(contentMain)
@@ -141,7 +138,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
             Log.d("TAG", ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION).toString())
             Log.d("TAG", "Permission granted")
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), 0)
-
         }
     }
 
@@ -150,7 +146,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         val locationTask: Task<Location> = fusedLocationClient.getLastLocation()
         locationTask.addOnSuccessListener { location ->
             if (location != null) {
-                //We have a location
                 Log.d("TAG", "onSuccess: $location")
                 Log.d("TAG", "onSuccess lat: " + location.latitude)
                 Log.d("TAG", "onSuccess lon: " + location.longitude)
@@ -172,27 +167,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                     Log.d("TAG", "About to access last location")
                     fusedLocationClient.requestLocationUpdates(locationReq, locationCallback, Looper.getMainLooper());
                     getLastLocation()
-
-//                    fusedLocationClient.getCurrentLocation(PRIORITY_LOW_POWER, cts.token)
-
-
-//                    val mLocationCallback: LocationCallback = object : LocationCallback() {
-//                        override fun onLocationResult(locationResult: LocationResult) {
-//                            Log.d("TAG", locationResult.lastLocation.longitude.toString())
-//                            val lon = locationResult.lastLocation.longitude
-//                            val lat = locationResult.lastLocation.latitude
-//                            fetchLocalWeather(lat, lon)
-//                        }
-//                    }
-//                    LocationServices.getFusedLocationProviderClient(this).requestLocationUpdates(locationReq, mLocationCallback, null)
-
-
-//                    fusedLocationClient.lastLocation
-//                            .addOnSuccessListener { location: Location? ->
-//                                val lat = location?.latitude
-//                                val lon = location?.longitude
-//                                fetchLocalWeather(lat, lon)
-//                            }
                 } else {
                     Toast.makeText(this@MainActivity, "Permission denied to access your location", Toast.LENGTH_SHORT).show()
                 }
@@ -203,26 +177,27 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
     private fun fetchLocalWeather(lat: Double?, lon: Double?) {
         Log.d("TAG", "Fetching local weather")
-//        launch(Dispatchers.Main) {
-//            val call = apiReq.getLocalForecast (lat, lon, BuildConfig.OPEN_WEATHER_API_KEY, getString(R.string.metric))
-//            call.enqueue(object : Callback<WeatherData> {
-//                override fun onResponse(call: Call<WeatherData>, response: Response<WeatherData>) {
-//                    if (!response.isSuccessful) {
-//                        Log.d("TAG", response.message())
-//                    }
-//                    val weatherData = response.body()!!
-//                    Log.d("TAG", weatherData.cityName)
-//                    degreesNumLabel.text = String.format("%.1f", weatherData.main.temperature)
-//                    cityLabel.text = weatherData.cityName
-//
-//                    searchField.setQuery("", false)
-//                }
-//
-//                override fun onFailure(call: Call<WeatherData>, t: Throwable) {
-//                    Log.d("TAG", t.toString())
-//                }
-//            })
-//        }
+        launch(Dispatchers.Main) {
+            val call = apiReq.getLocalForecast (lat, lon, BuildConfig.OPEN_WEATHER_API_KEY, getString(R.string.metric))
+            call.enqueue(object : Callback<WeatherData> {
+                override fun onResponse(call: Call<WeatherData>, response: Response<WeatherData>) {
+                    if (!response.isSuccessful) {
+                        Log.d("TAG", response.message())
+                    }
+                    val weatherData = response.body()!!
+                    Log.d("TAG", weatherData.cityName)
+                    degreesNumLabel.text = String.format("%.1f", weatherData.main.temperature)
+                    cityLabel.text = weatherData.cityName
+
+                    searchField.setQuery("", false)
+                    fusedLocationClient.removeLocationUpdates(locationCallback)
+                }
+
+                override fun onFailure(call: Call<WeatherData>, t: Throwable) {
+                    Log.d("TAG", t.toString())
+                }
+            })
+        }
     }
 
 }

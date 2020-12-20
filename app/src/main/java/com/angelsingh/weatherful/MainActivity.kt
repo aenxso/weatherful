@@ -10,7 +10,6 @@ import android.os.Looper
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import android.view.Window
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.annotation.NonNull
@@ -19,6 +18,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
 import com.angelsingh.weatherful.api.ApiRequests
 import com.angelsingh.weatherful.model.WeatherData
+import com.angelsingh.weatherful.model.WeatherModel
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.activity_main.*
@@ -37,7 +37,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     private val apiReq by lazy {
         ApiRequests.create()
     }
-    var locationReq: LocationRequest? = null
+    private val weatherModel = WeatherModel()
+    private var locationReq: LocationRequest? = null
 
     var locationCallback: LocationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
@@ -85,9 +86,10 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                         Log.d("TAG", response.message())
                     }
                     val weatherData = response.body()!!
-                    Log.d("TAG", weatherData.cityName)
-                    degreesNumLabel.text = String.format("%.1f", weatherData.main.temperature)
+                    Log.d("TAG", weatherData.weather[0].id.toString())
+                    degreesNumLabel.text = String.format(getString(R.string.format1DecimalPlace), weatherData.main.temperature)
                     cityLabel.text = weatherData.cityName
+                    conditionImage.setImageResource(getResourceId(weatherModel.iconMap[weatherData.weather[0].id].toString()))
 
                     searchField.setQuery("", false)
                 }
@@ -97,6 +99,10 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                 }
             })
         }
+    }
+
+    private fun getResourceId(string: String?): Int {
+        return resources.getIdentifier(getString(R.string.drawablepath) + string, null, null)
     }
 
     private fun hideKeyboard() {
@@ -178,7 +184,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     private fun fetchLocalWeather(lat: Double?, lon: Double?) {
         Log.d("TAG", "Fetching local weather")
         launch(Dispatchers.Main) {
-            val call = apiReq.getLocalForecast (lat, lon, BuildConfig.OPEN_WEATHER_API_KEY, getString(R.string.metric))
+            val call = apiReq.getLocalForecast(lat, lon, BuildConfig.OPEN_WEATHER_API_KEY, getString(R.string.metric))
             call.enqueue(object : Callback<WeatherData> {
                 override fun onResponse(call: Call<WeatherData>, response: Response<WeatherData>) {
                     if (!response.isSuccessful) {
@@ -186,8 +192,9 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
                     }
                     val weatherData = response.body()!!
                     Log.d("TAG", weatherData.cityName)
-                    degreesNumLabel.text = String.format("%.1f", weatherData.main.temperature)
+                    degreesNumLabel.text = String.format(getString(R.string.format1DecimalPlace), weatherData.main.temperature)
                     cityLabel.text = weatherData.cityName
+                    conditionImage.setImageResource(getResourceId(weatherModel.iconMap[weatherData.weather[0].id].toString()))
 
                     searchField.setQuery("", false)
                     fusedLocationClient.removeLocationUpdates(locationCallback)

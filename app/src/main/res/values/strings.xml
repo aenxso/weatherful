@@ -3,4 +3,6 @@
     <string name="search">Search... </string>
     <string name="celsius">°C</string>
     <string name="metric">metric</string>
+    <string name="drawablepath">com.angelsingh.weatherful:drawable/</string>
+    <string name="format1DecimalPlace">%.1f</string>
 </resources>

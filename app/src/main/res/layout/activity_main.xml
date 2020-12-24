@@ -78,11 +78,13 @@
         android:layout_height="130dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:alpha="0.76"
         android:maxWidth="120dp"
         android:maxHeight="120dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchButton"
-        app:srcCompat="@drawable/cloudy" />
+        app:srcCompat="@drawable/wi_cloud"
+        app:tint="@color/dark_blue" />
 
     <TextView
         android:id="@+id/degreesCLabel"
@@ -91,7 +93,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:text="@string/celsius"
-        android:textColor="#BA000000"
+        android:textColor="#CF081240"
         android:textSize="80sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/conditionImage" />
@@ -103,7 +105,7 @@
         android:layout_marginEnd="3dp"
         android:fontFamily="sans-serif-black"
         android:text="21"
-        android:textColor="#BA000000"
+        android:textColor="#D4081240"
         android:textSize="80sp"
         android:textStyle="bold"
         app:layout_constraintBaseline_toBaselineOf="@+id/degreesCLabel"
@@ -115,8 +117,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="16dp"
-        android:textColor="#BA000000"
-        android:textSize="21sp"
+        android:fontFamily="@font/ubuntu"
+        android:text="White Rock"
+        android:textColor="#CF081240"
+        android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/degreesCLabel" />
 

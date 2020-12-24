@@ -5,3 +5,8 @@ Users can search for a city by typing in the name, or pressing the location icon
 
 <img src="Documentation/Weatherful-screenshot.jpg" width="400">
  
+## In progress:
+
+* Change background depending on time of day
+* Add sunrise/sunset times
+* Further organize code
